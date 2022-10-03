@@ -59,6 +59,14 @@ public class ParameterTypeRegistryTest {
     }
 
     @Test
+    public void a_parameter_type_with_embedded_case_insensitive_flag_makes_the_whole_regexp_case_insensitive() {
+        String timeUnitRegExp = "((?i)(nanosecond|microsecond|millisecond|second|minute|hour|day)s?)";
+        ParameterType<String> timeUnit = new ParameterType<>("time_unit", timeUnitRegExp, String.class, (Transformer<String>) String::new, false, false);
+        registry.defineParameterType(timeUnit);
+        assertSame(timeUnit, registry.lookupByRegexp(CAPITALISED_WORD, Pattern.compile("([A-Z]+\\w+) and ([A-Z]+\\w+)"), "Lisa and Bob"));
+    }
+
+    @Test
     public void looks_up_preferential_parameter_type_by_regexp() {
         ParameterType<Name> name = new ParameterType<>("name", CAPITALISED_WORD, Name.class, Name::new, false, false);
         ParameterType<Person> person = new ParameterType<>("person", CAPITALISED_WORD, Person.class, Person::new, false, true);
